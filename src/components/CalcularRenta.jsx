@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { jsPDF } from "jspdf"; // Importar jsPDF
+
 import Header from "./Header";
 
 const CalcularRenta = () => {
@@ -55,21 +56,18 @@ const CalcularRenta = () => {
   };
 
   const calcularDeducciones = () => {
-
     if (gastosMedicos > 800 || colegiatura > 800) {
-      alert('Los gastos médicos y de colegiatura no pueden ser mayor a 800');
+      alert("Los gastos médicos y de colegiatura no pueden ser mayor a 800");
       setGastosMedicos(0);
       setColegiatura(0);
       return 0;
-    } 
-    else {
+    } else {
       return gastosMedicos + colegiatura;
     }
-
   };
 
   const calcularImpuestoComputado = (rentaGravada, deduccionesPersonales) => {
-    let renta = 0;
+    //let renta = 0;
     let exento = 0;
     let porcentaje = 0;
     let cuotaFija = 0;
@@ -167,6 +165,94 @@ const CalcularRenta = () => {
     setTotalADevolver(totalDevolver.toFixed(2));
     setTotalAPagar(totalPagar.toFixed(2));
   };
+
+  // Generar y descargar PDF
+  const generarPDF = () => {
+    const doc = new jsPDF();
+
+    // Establecer color de fondo para el encabezado
+    doc.setFillColor(0, 102, 204); // Azul
+    doc.rect(0, 0, 210, 30, "F"); // Rectángulo de fondo para el encabezado
+
+    // Establecer el color del texto
+    doc.setTextColor(255, 255, 255); // Blanco para el encabezado
+    doc.setFontSize(18);
+    doc.text("Constancia de Declaración de Impuesto sobre la Renta", 15, 20);
+
+    // Establecer color del texto normal
+    doc.setTextColor(0, 0, 0); // Negro para el contenido
+    doc.setFontSize(12);
+
+    // Agregar líneas separadoras
+    const addSeparator = (y) => {
+      doc.setDrawColor(0, 102, 204); // Azul para la línea
+      doc.line(15, y, 195, y);
+    };
+
+    // Datos de la constancia
+    doc.text(`Nombre: ${nombre}`, 15, 50);
+    doc.text(`NIT: ${nit}`, 15, 60);
+    addSeparator(65); // Línea después del NIT
+
+    doc.text(`Rentas gravadas: $${rentaGravada}`, 15, 70);
+    doc.text(`Gastos médicos: $${gastosMedicos}`, 15, 80);
+    doc.text(`Colegiatura: $${colegiatura}`, 15, 90);
+    addSeparator(95); // Línea después de colegiatura
+
+    doc.text(
+      `Total de deducciones personales: $${deduccionesPersonales}`,
+      15,
+      100
+    );
+    doc.text(`Renta neta: $${rentaNeta}`, 15, 110);
+    addSeparator(115); // Línea después de renta neta
+
+    doc.text(`Impuesto Computado: $${impuestoComputado}`, 15, 120);
+    doc.text(`Impuesto Retenido: $${impuestoRetenido}`, 15, 130);
+    addSeparator(135); // Línea después de impuesto retenido
+
+    doc.text(`Total a pagar: $${totalAPagar}`, 15, 140);
+    doc.text(`Total a devolver: $${totalADevolver}`, 15, 150);
+
+    // Establecer un pie de página con color
+    doc.setFillColor(0, 102, 204); // Azul para el pie de página
+    doc.rect(0, 280, 210, 10, "F"); // Rectángulo para el pie de página
+    doc.setTextColor(255, 255, 255); // Blanco para el texto del pie
+    doc.text(
+      "Gracias por utilizar nuestro servicio",
+      105,
+      285,
+      null,
+      null,
+      "center"
+    );
+
+    // Guardar el documento PDF
+    doc.save(`ConstanciaRenta_${nombre}.pdf`);
+  };
+  // const generarPDF = () => {
+  //   const doc = new jsPDF();
+  //   doc.setFontSize(14);
+  //   doc.text("Constancia de Declaración de Impuesto sobre la Renta", 20, 20);
+  //   doc.setFontSize(12);
+  //   doc.text(`Nombre: ${nombre}`, 20, 40);
+  //   doc.text(`NIT: ${nit}`, 20, 50);
+  //   doc.text(`Rentas gravadas: $${rentaGravada}`, 20, 60);
+  //   doc.text(`Gastos médicos: $${gastosMedicos}`, 20, 70);
+  //   doc.text(`Colegiatura: $${colegiatura}`, 20, 80);
+  //   doc.text(
+  //     `Total de deducciones personales: $${deduccionesPersonales}`,
+  //     20,
+  //     90
+  //   );
+  //   doc.text(`Renta neta: $${rentaNeta}`, 20, 100);
+  //   doc.text(`Impuesto Computado: $${impuestoComputado}`, 20, 110);
+  //   doc.text(`Impuesto Retenido: $${impuestoRetenido}`, 20, 120);
+  //   doc.text(`Total a pagar: $${totalAPagar}`, 20, 130);
+  //   doc.text(`Total a devolver: $${totalADevolver}`, 20, 140);
+
+  //   doc.save(`ConstanciaRenta_${nombre}.pdf`);
+  // };
 
   return (
     <div className="bg-secondary bg-opacity-10 pb-5">
@@ -394,6 +480,15 @@ const CalcularRenta = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="text-center mt-3 mb-0">
+        <button
+          className="btn"
+          style={{ backgroundColor: "#73EC8B" }}
+          onClick={generarPDF}
+        >
+          Descargar constancia
+        </button>
       </div>
     </div>
   );
