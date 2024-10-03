@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Header from "./Header";
 
 const CalcularRenta = () => {
   const [rentaGravada, setRentaGravada] = useState(0);
@@ -35,13 +36,6 @@ const CalcularRenta = () => {
     setNombre(e.target.value); // Actualiza el estado con el valor ingresado
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí puedes usar el nombre y NIT como desees
-    console.log("Nombre:", nombre);
-    console.log("NIT:", nit);
-    // También podrías enviar los datos a un servidor o realizar otra acción
-  };
   //************************** */
 
   const limpiarDatos = (e) => {
@@ -61,17 +55,28 @@ const CalcularRenta = () => {
   };
 
   const calcularDeducciones = () => {
-    return gastosMedicos + colegiatura;
+
+    if (gastosMedicos > 800 || colegiatura > 800) {
+      alert('Los gastos médicos y de colegiatura no pueden ser mayor a 800');
+      setGastosMedicos(0);
+      setColegiatura(0);
+      return 0;
+    } 
+    else {
+      return gastosMedicos + colegiatura;
+    }
+
   };
 
   const calcularImpuestoComputado = (rentaGravada, deduccionesPersonales) => {
-    // let renta = 0;
+    let renta = 0;
     let exento = 0;
     let porcentaje = 0;
     let cuotaFija = 0;
 
     if (rentaGravada >= 0.01 && rentaGravada <= 4064) {
-      //   renta = rentaGravada;
+      // renta = rentaGravada;
+      return 0;
     } else if (rentaGravada >= 4064.01 && rentaGravada <= 9142.86) {
       exento = 4064;
       porcentaje = 0.1;
@@ -98,7 +103,8 @@ const CalcularRenta = () => {
     let rentaGravadaMensual = rentaGravada / 12;
 
     if (rentaGravadaMensual >= 0.01 && rentaGravadaMensual <= 472) {
-      return rentaGravadaMensual * 12;
+      // return rentaGravadaMensual * 12;
+      return 0;
     } else if (rentaGravadaMensual >= 472.01 && rentaGravadaMensual <= 895.24) {
       exento = 472;
       porcentaje = 0.1;
@@ -163,8 +169,9 @@ const CalcularRenta = () => {
   };
 
   return (
-    <div className="bg-primary bg-opacity-50 pb-5 pt-3">
-      <div className="shadow-sm p-3 mt-0 pb-3 mx-2 bg-primary bg-opacity-25 rounded">
+    <div className="bg-secondary bg-opacity-10 pb-5">
+      <Header />
+      <div className="shadow-sm p-3 mt-0 pb-3 mx-2 rounded">
         <div className="row">
           <div className="col-12 col-md-6 m-auto">
             <div>
@@ -210,9 +217,6 @@ const CalcularRenta = () => {
                     Ejercicio del <span>01/01/2024</span> al{" "}
                     <span>01/12/2024</span>
                   </p>
-                  <button className="btn btn-primary" onClick={handleSubmit}>
-                    Ver datos
-                  </button>
                 </div>
               </section>
               <form className="">
@@ -223,6 +227,7 @@ const CalcularRenta = () => {
                   <p className="m-0">Rentas gravadas: </p>
                   <input
                     type="number"
+                    min={0}
                     className="form-control w-25 h-25"
                     value={rentaGravada}
                     onChange={(e) => setRentaGravada(e.target.value)}
@@ -264,6 +269,7 @@ const CalcularRenta = () => {
                   <p className="m-0">Gastos médicos: </p>
                   <input
                     type="number"
+                    min={0}
                     className="form-control w-25 h-25"
                     value={gastosMedicos}
                     onChange={(e) =>
@@ -278,6 +284,7 @@ const CalcularRenta = () => {
                   <p className="m-0">Colegiaturas: </p>
                   <input
                     type="number"
+                    min={0}
                     className="form-control w-25 h-25"
                     value={colegiatura}
                     onChange={(e) =>
@@ -386,13 +393,6 @@ const CalcularRenta = () => {
               </form>
             </div>
           </div>
-        </div>
-        <div className="text-center mt-3 mb-0">
-          <Link to="/constanciaRenta">
-            <button className="btn" style={{ backgroundColor: "#73EC8B" }}>
-              Imprimir constancia
-            </button>
-          </Link>
         </div>
       </div>
     </div>

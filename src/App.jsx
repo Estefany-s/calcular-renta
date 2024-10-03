@@ -10,8 +10,8 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<CalcularRenta />} />
-          <Route path="/constanciaRenta" element={<ConstanciaRenta />} />
+          <Route path="/" element={<ConstanciaRenta />} />
+          <Route path="/calculoRenta" element={<CalcularRenta />} />
         </Routes>
       </Router>
     </>
