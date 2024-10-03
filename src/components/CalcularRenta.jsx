@@ -14,6 +14,7 @@ const CalcularRenta = () => {
   const [totalAPagar, setTotalAPagar] = useState();
   const [totalADevolver, setTotalADevolver] = useState();
   const [deduccionesPersonales, setDeduccionesPersonales] = useState();
+
   //Validar NIT****************
   const [nombre, setNombre] = useState("");
   const [nit, setNit] = useState("");
@@ -90,7 +91,8 @@ const CalcularRenta = () => {
     }
 
     return (
-      (rentaGravada - exento) * porcentaje + cuotaFija - deduccionesPersonales
+      (rentaGravada - exento) * porcentaje + cuotaFija
+      // (rentaGravada - exento) * porcentaje + cuotaFija - deduccionesPersonales
     );
   };
 
@@ -122,8 +124,12 @@ const CalcularRenta = () => {
 
   const calcularPagarODevolver = (impuestoComputado, impuestoRetenido) => {
     if (impuestoRetenido > impuestoComputado) {
+      // if (totalAPagar < 0) {
+      //   totalDevolver = totalAPagar < 0 ? Math.abs(totalAPagar) : 0;
+      // }
       return {
         totalDevolver: impuestoRetenido - impuestoComputado,
+        // totalADevolver,
         totalPagar: 0,
       };
     } else {
@@ -149,7 +155,8 @@ const CalcularRenta = () => {
 
     // Calcular impuestos
     const impuestoComputado = calcularImpuestoComputado(
-      rentaGravada,
+      // rentaGravada,
+      rentaNeta,
       deduccionesPersonales
     );
     setImpuestoComputado(impuestoComputado.toFixed(2));
@@ -190,29 +197,31 @@ const CalcularRenta = () => {
     };
 
     // Datos de la constancia
+    doc.text(`Empresa: TecnoComercial`, 15, 40);
     doc.text(`Nombre: ${nombre}`, 15, 50);
     doc.text(`NIT: ${nit}`, 15, 60);
-    addSeparator(65); // Línea después del NIT
+    doc.text('Ejercicio del 01/01/2024 al 01/12/2024', 15, 70);
+    addSeparator(75); // Línea después del NIT
 
-    doc.text(`Rentas gravadas: $${rentaGravada}`, 15, 70);
-    doc.text(`Gastos médicos: $${gastosMedicos}`, 15, 80);
-    doc.text(`Colegiatura: $${colegiatura}`, 15, 90);
+    doc.text(`Rentas gravadas: $${rentaGravada}`, 15, 80);
+    doc.text(`Gastos médicos: $${gastosMedicos}`, 15, 90);
+    doc.text(`Colegiatura: $${colegiatura}`, 15, 100);
     addSeparator(95); // Línea después de colegiatura
 
     doc.text(
       `Total de deducciones personales: $${deduccionesPersonales}`,
       15,
-      100
+      110
     );
-    doc.text(`Renta neta: $${rentaNeta}`, 15, 110);
+    doc.text(`Renta neta: $${rentaNeta}`, 15, 120);
     addSeparator(115); // Línea después de renta neta
 
-    doc.text(`Impuesto Computado: $${impuestoComputado}`, 15, 120);
-    doc.text(`Impuesto Retenido: $${impuestoRetenido}`, 15, 130);
+    doc.text(`Impuesto Computado: $${impuestoComputado}`, 15, 130);
+    doc.text(`Impuesto Retenido: $${impuestoRetenido}`, 15, 140);
     addSeparator(135); // Línea después de impuesto retenido
 
-    doc.text(`Total a pagar: $${totalAPagar}`, 15, 140);
-    doc.text(`Total a devolver: $${totalADevolver}`, 15, 150);
+    doc.text(`Total a pagar: $${totalAPagar}`, 15, 150);
+    doc.text(`Total a devolver: $${totalADevolver}`, 15, 160);
 
     // Establecer un pie de página con color
     doc.setFillColor(0, 102, 204); // Azul para el pie de página
@@ -356,10 +365,11 @@ const CalcularRenta = () => {
                   <input
                     type="number"
                     min={0}
+                    max={800}
                     className="form-control w-25 h-25"
                     value={gastosMedicos}
                     onChange={(e) =>
-                      setGastosMedicos(parseInt(e.target.value) || 0)
+                      setGastosMedicos(parseFloat(e.target.value) || 0)
                     }
                   />
                 </div>
@@ -371,10 +381,11 @@ const CalcularRenta = () => {
                   <input
                     type="number"
                     min={0}
+                    max={800}
                     className="form-control w-25 h-25"
                     value={colegiatura}
                     onChange={(e) =>
-                      setColegiatura(parseInt(e.target.value) || 0)
+                      setColegiatura(parseFloat(e.target.value) || 0)
                     }
                   />
                 </div>
