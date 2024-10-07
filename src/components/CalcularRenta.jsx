@@ -161,8 +161,8 @@ const CalcularRenta = () => {
     );
     setImpuestoComputado(impuestoComputado.toFixed(2));
 
-    const impuestoRetenido = calcularImpuestoRetenido(rentaGravada);
-    setImpuestoRetenido(impuestoRetenido.toFixed(2));
+    // const impuestoRetenido = calcularImpuestoRetenido(rentaGravada);
+    // setImpuestoRetenido(impuestoRetenido.toFixed(2));
 
     // Calcular total a pagar o devolver
     const { totalDevolver, totalPagar } = calcularPagarODevolver(
@@ -435,10 +435,11 @@ const CalcularRenta = () => {
                 >
                   <p className="m-0">Impuesto Retenido </p>
                   <input
-                    type="text"
+                    type="number"
+                    min={0}
                     className="form-control w-25 h-25"
                     value={parseFloat(impuestoRetenido) || 0}
-                    readOnly
+                    onChange={(e) => setImpuestoRetenido(e.target.value)}
                   />
                 </div>
                 <div

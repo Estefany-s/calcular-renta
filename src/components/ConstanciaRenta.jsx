@@ -41,7 +41,7 @@ const ConstanciaRenta = () => {
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
                     <p>Impuesto sobre la renta</p>
-                    <p>$1,880.14</p>
+                    <p>$1,880.17</p>
                 </div>
                 </div>
                 <p className="mt-3 text-center">
